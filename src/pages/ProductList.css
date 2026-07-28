@@ -1,0 +1,51 @@
+/* @import "./Dashboard.css";
+
+.table-card {
+  background: white;
+  padding: 25px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  margin-top: 25px;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 12px;
+  text-align: left;
+}
+
+thead {
+  background: #f3f4f6;
+}
+
+tr {
+  border-bottom: 1px solid #eee;
+}
+
+td img {
+  width: 60px;
+  height: 60px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.actions button {
+  border: none;
+  padding: 8px 10px;
+  margin-right: 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  color: white;
+}
+
+.actions .edit {
+  background: #3b82f6;
+}
+
+.actions .delete {
+  background: #ef4444;
+} */

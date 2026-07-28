@@ -1,0 +1,29 @@
+@import "./Dashboard.css";
+
+.form-card {
+  background: white;
+  padding: 30px;
+  width: 450px;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  margin-top: 25px;
+}
+
+.form-card input {
+  width: 100%;
+  padding: 12px;
+  margin-bottom: 12px;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.form-card button {
+  width: 100%;
+  padding: 12px;
+  background: #7E9E8D;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 16px;
+}

@@ -1,0 +1,41 @@
+
+
+.cards {
+  display: flex; 
+  flex-wrap: wrap;
+  justify-content: center;
+  flex-direction: row;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 25px;
+}
+
+.card {
+  background: white;
+  padding: 30px;
+  width: 280px; 
+  
+  flex-wrap: wrap;
+  border-radius: 15px;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.clickable {
+  cursor: pointer;
+}
+
+/* Icons */
+
+.icon {
+  font-size: 36px;
+  margin-bottom: 15px;
+}
+/* 
+.blue { color: #3b82f6; }
+.green { color: #22c55e; }
+.orange { color: #f59e0b; }
+.purple { color: #8b5cf6; } */
