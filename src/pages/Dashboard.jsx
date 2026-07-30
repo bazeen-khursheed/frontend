@@ -11,7 +11,7 @@ const Dashboard = () => {
   navigate("/");
 }; 
   useEffect(() => {
-    axios.get("http://localhost:8080/product")
+    axios.get("https://backend-2p6c.vercel.app/product")
       .then(res => setTotalProducts(res.data.length));
   }, []);
 

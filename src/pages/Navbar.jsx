@@ -34,7 +34,7 @@ const [selectedIndex, setSelectedIndex] = useState(-1);
 
 useEffect(() => {
   axios
-    .get("http://localhost:8080/product")
+    .get("https://backend-2p6c.vercel.app/product")
     .then((res) => {
       setProducts(res.data);
     })

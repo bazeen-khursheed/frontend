@@ -12,7 +12,7 @@ const ProductDetail = () => {
 const { addToCart } = useContext(CartContext);
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/product/${id}`)
+      .get(`https://backend-2p6c.vercel.app/product/${id}`)
       .then((res) => {
         setProduct(res.data);
       })

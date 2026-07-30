@@ -1,107 +1,3 @@
-// import axios from "axios";
-// import { useEffect, useState } from "react";
-// import { useLocation, useNavigate } from "react-router-dom";
-// import "./CreateProduct.css";
-
-// const CreateProduct = () => {
-//   const navigate = useNavigate();
-//   const { state } = useLocation();
-
-//   const [form, setForm] = useState({
-//     title: "",
-//     desc: "",
-//     price: "",
-//     stock: "",
-//     category: "",
-//     image: "",
-//   });
-
-//   useEffect(() => {
-//     if (state) setForm(state);
-//   }, [state]);
-
-//   const submit = async () => {
-//     if(form.title == ""){
-//       alert("please fill the title!")
-//       return
-      
-//     }
-//     if(form.desc == ""){
-//       alert("please fill the description")
-//       return
-//     }
-//     if(form.price == ""){
-//       alert("please fill the price")
-//       return
-//     }
-//     if(form.stock == ""){
-//       alert("please fill the stock")
-//       return
-//     }
-//     if(form.category == ""){
-//       alert("please fill the category")
-//       return
-//     }
-//     if(form.image == ""){
-//       alert("please attach image")
-//       return
-//     }
-    
-//     if (state) {
-//       await axios.put(`http://localhost:8080/update/${state._id}`, {
-//         title: form.title,
-//         desc: form.desc,
-//         price: form.price,
-//         image: form.image,
-//         category: form.category,
-//         stock: form.stock,
-//       });
-//     } else {
-//       await axios.post("http://localhost:8080/product", form);
-//     }
-//     navigate("/product-list");
-//   };
-
-//   return (
-//     <div className="layout">
-//       {/* Sidebar */}
-//       <div className="sidebar">
-//         <h2>Admin Panel</h2>
-//         <ul>
-//           <li onClick={() => navigate("/dashboard")}>Dashboard</li>
-//           <li className="active">Create Product</li>
-//           <li onClick={() => navigate("/product-list")}>Product List</li>
-//         </ul>
-//       </div>
-
-//       {/* Main */}
-//       <div className="main">
-//         <h1>{state ? "Update Product" : "Create Product"}</h1>
-
-//         <div className="form-card">
-//           {Object.keys(form).map(key => (
-//             <input
-//               key={key}
-//               placeholder={key}
-//               value={form[key]}
-//               onChange={e =>
-//                 setForm({ ...form, [key]: e.target.value })
-//               }
-//             />
-//           ))}
-
-//           <button onClick={submit}>
-//             {state ? "Update Product" : "Add Product"}
-//           </button>
-//         </div>
-//       </div>
-//     </div>
-//   );
-// };
-
-// export default CreateProduct;
-
-
 
 
 
@@ -134,9 +30,9 @@ const CreateProduct = () => {
     }
 
     if (state) {
-      await axios.put(`http://localhost:8080/update/${state._id}`, form);
+      await axios.put(`https://backend-2p6c.vercel.app/update/${state._id}`, form);
     } else {
-      await axios.post("http://localhost:8080/product", form);
+      await axios.post("https://backend-2p6c.vercel.app/product", form);
     }
     navigate("/product-list");
   };

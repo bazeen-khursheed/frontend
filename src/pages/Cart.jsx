@@ -23,7 +23,7 @@ const Cart = () => {
       console.log("Cart Items:", cartItems);
 console.log(cartItems);
 
-      const res = await axios.post("http://localhost:8080/checkout", {
+      const res = await axios.post("https://backend-2p6c.vercel.app/checkout", {
         items: cartItems
       });
       console.log(res);

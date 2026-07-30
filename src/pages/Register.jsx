@@ -1,5 +1,4 @@
 import React, { useState } from 'react'
-import "./Register.css"
 import { Link } from 'react-router-dom'
 import axios from "axios"
 import toast from "react-hot-toast"
@@ -8,36 +7,19 @@ import { useEffect } from 'react'
 
 
 const Register = () => {
-    useEffect(() => {
-   
-    document.body.classList.add("bg-slate-200", 
-        // "h-[100vh]",
-      
-      "flex",
-      "items-center",
-      "justify-center",
-      
-      
-    );
-
-  
-  }, []); 
+    useEffect(() => {document.body.classList.add("bg-slate-200","flex","items-center","justify-center",);}, []); 
 
    
-    const [name, setName] = useState("")
-    const [phone, setPhone] = useState("")
-    const [email, setEmail] = useState("")
-    const [password, setPassword] = useState("")
-    const navigate = useNavigate()
-    async function submit(e) {
+const [name, setName] = useState("")
+const [phone, setPhone] = useState("")
+const [email, setEmail] = useState("")
+const [password, setPassword] = useState("")
+const navigate = useNavigate()
+    
+async function submit(e) {
         e.preventDefault()
         try {
-            const data = await axios.post("http://localhost:8080/register", {
-                name,
-                email,
-                password,
-                phone
-            })
+            const data = await axios.post("https://backend-2p6c.vercel.app/register", {name,email,password,phone })
             alert("Register Successfully!")
             navigate("/login")
         } catch (error) {
@@ -46,7 +28,7 @@ const Register = () => {
     }
 
 
-    return (
+return (
         <>
       
         <div className="container mt-[5px] bg-white h-[580px] w-[400px] p-[25px] rounded-[8px] shadow-[0_0_30px_rgba(0,0,0,0.2)]">

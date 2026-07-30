@@ -22,7 +22,7 @@ const Home = () => {
     try {
 
       const res = await axios.get(
-        "http://localhost:8080/product"
+        "https://backend-2p6c.vercel.app/product"
       );
 
       setProducts(res.data);
@@ -50,7 +50,7 @@ const Home = () => {
 
 
     const res = await axios.post(
-      "http://localhost:8080/create-checkout-link",
+      "https://backend-2p6c.vercel.app/create-checkout-link",
       {
         name:item.title,
         description:item.desc,
