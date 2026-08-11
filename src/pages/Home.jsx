@@ -8,34 +8,24 @@ import { Heart, ShoppingCart } from "lucide-react";
  import { useNavigate } from "react-router-dom";
 
 const Home = () => {
+const [products, setProducts] = useState([]);
+const { addToCart } = useContext(CartContext);
+const { wishlistItems, toggleWishlist } =
+useContext(WishlistContext);
+const getProducts = async () => {
+  try {
+const res = await axios.get("https://backend-2p6c.vercel.app/product"
+);
 
-  const [products, setProducts] = useState([]);
-
-  const { addToCart } = useContext(CartContext);
-
-  const { wishlistItems, toggleWishlist } =
-    useContext(WishlistContext);
-
-
-
-  const getProducts = async () => {
-    try {
-
-      const res = await axios.get(
-        "https://backend-2p6c.vercel.app/product"
-      );
-
-      setProducts(res.data);
-
-    } catch (error) {
-      console.log(error);
-    }
-  };
+  setProducts(res.data);
+} catch (error) {
+  console.log(error);
+}
+};
 
 
-
-  useEffect(() => {
-    getProducts();
+useEffect(() => {
+  getProducts();
   }, []);
 
 

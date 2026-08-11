@@ -65,8 +65,8 @@ const getProducts = async () => {
         <p className="text-gray-600 font-[700] mt-4">Discover premium products carefully selected for quality style, and value. <br />
          Shop the latest collections with confidence and enjoy an exceptional shopping experience.</p>
 </div>
-<div className= 'flex flex-wrap justify-center   gap-6 bg-slate-300 min-h-screen '>{products.map(item => (<div
-        key={item._id} className="group w-[280px] bg-white rounded-[24px] overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
+<div className= 'flex flex-wrap justify-center   gap-6 bg-slate-300 min-h-screen '>{products.map(item => 
+(<div key={item._id} className="group w-[280px] bg-white rounded-[24px] overflow-hidden shadow-md hover:shadow-xl hover:-translate-y-2 transition-all duration-500">
  
 <div className="h-3 bg-gradient-to-r from-[#0f172a] via-[#0b2545] to-[#020617]"></div>
 <div className="bg-white h-56 flex items-center justify-center relative">

@@ -5,6 +5,7 @@ import ProductList from "./pages/ProductList";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
 import ProtectedRoutes from "./pages/ProtectedRoutes";
+import AdminProtectedRoute from "./pages/AdminProtectedRoute";
 import Home from "./pages/Home";
 import Products from "./pages/Products";
 import Navbar from "./pages/Navbar";
@@ -37,11 +38,9 @@ function App() {
             <Route path="/product/:id" element={<ProductDetail />} />
             <Route path="/cart" element={<Cart />} />
             <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/dashboard"element={<ProtectedRoutes>
-            <Dashboard /></ProtectedRoutes>}/>
-            <Route path="/create-product" element={<ProtectedRoutes>
-            <CreateProduct /></ProtectedRoutes>}/>
-            <Route path="/product-list"element={<ProtectedRoutes><ProductList /></ProtectedRoutes>}/>
+            <Route path="/dashboard"element={<AdminProtectedRoute><Dashboard /></AdminProtectedRoute>} />
+            <Route path="/create-product" element={<AdminProtectedRoute><CreateProduct /></AdminProtectedRoute>}/>
+            <Route path="/product-list"element={<AdminProtectedRoute><ProductList /></AdminProtectedRoute>}/>
             <Route path="/profile" element={<Profile />} />
             <Route path="/profilesidebar" element={<ProfileSidebar />} />
             <Route path="/orderhistory" element={<OrderHistory />} />
