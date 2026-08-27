@@ -21,7 +21,7 @@ const navigate = useNavigate()
 async function submit(e) {
   e.preventDefault()
   try {
-      const data = await axios.post("http://localhost:8080/login", {
+      const data = await axios.post("https://backend-2p6c.vercel.app/login", {
         email,
         password
 });
