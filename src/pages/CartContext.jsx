@@ -1,14 +1,145 @@
-// CartContext.js
 import React, { createContext, useState, useEffect } from "react";
+import axios from "axios";
 
 export const CartContext = createContext();
 
+const API = "https://backend-2p6c.vercel.app";
+
 export const CartProvider = ({ children }) => {
-  // LocalStorage se cart load
-  const [cartItems, setCartItems] = useState(() => {
-    const savedCart = localStorage.getItem("cart");
-    return savedCart ? JSON.parse(savedCart) : [];
-  });
+
+  const [cartItems, setCartItems] = useState([]);
+
+  // Login user ka cart MongoDB se load
+  const loadCart = async () => {
+    try {
+
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (!user) {
+        setCartItems([]);
+        return;
+      }
+
+      const res = await axios.get(
+        `${API}/cart/${user.id}`
+      );
+
+      setCartItems(res.data || []);
+
+    } catch (error) {
+      console.log("Cart Load Error:", error);
+      setCartItems([]);
+    }
+  };
+
+  useEffect(() => {
+    loadCart();
+  }, []);
+
+  // MongoDB mein cart save
+  const saveCart = async (updatedCart) => {
+    try {
+
+      const user = JSON.parse(localStorage.getItem("user"));
+
+      if (!user) return;
+
+      await axios.put(
+        `${API}/cart/${user.id}`,
+        {
+          cart: updatedCart
+        }
+      );
+
+    } catch (error) {
+      console.log("Cart Save Error:", error);
+    }
+  };
+
+  // Add To Cart
+  const addToCart = (product) => {
+
+    setCartItems((prevItems) => {
+
+      const existingItem = prevItems.find(
+        (item) => item._id === product._id
+      );
+
+      let updatedCart;
+
+      if (existingItem) {
+
+        updatedCart = prevItems.map((item) =>
+          item._id === product._id
+            ? {
+                ...item,
+                quantity: item.quantity + 1
+              }
+            : item
+        );
+
+      } else {
+
+        updatedCart = [
+          ...prevItems,
+          {
+            ...product,
+            quantity: 1
+          }
+        ];
+
+      }
+
+      saveCart(updatedCart);
+
+      return updatedCart;
+    });
+  };
+
+  // Remove Product
+  const removeFromCart = (productId) => {
+
+    setCartItems((prevItems) => {
+
+      const updatedCart = prevItems.filter(
+        (item) => item._id !== productId
+      );
+
+      saveCart(updatedCart);
+
+      return updatedCart;
+    });
+  };
+
+  // Update Quantity
+  const updateQuantity = (productId, newQuantity) => {
+
+    if (newQuantity <= 0) {
+      removeFromCart(productId);
+      return;
+    }
+
+    setCartItems((prevItems) => {
+
+      const updatedCart = prevItems.map((item) =>
+        item._id === productId
+          ? {
+              ...item,
+              quantity: newQuantity
+            }
+          : item
+      );
+
+      saveCart(updatedCart);
+
+      return updatedCart;
+    });
+  };
+
+  // Clear only screen state
+  const clearCart = () => {
+    setCartItems([]);
+  };
 
   // Cart Count
   const cartCount = cartItems.reduce(
@@ -22,63 +153,6 @@ export const CartProvider = ({ children }) => {
     0
   );
 
-  // LocalStorage Update
-  useEffect(() => {
-    if (cartItems.length > 0) {
-      localStorage.setItem("cart", JSON.stringify(cartItems));
-    } else {
-      localStorage.removeItem("cart");
-    }
-  }, [cartItems]);
-
-  // Add To Cart
-  const addToCart = (product) => {
-    setCartItems((prevItems) => {
-      const existingItem = prevItems.find(
-        (item) => item._id === product._id
-      );
-
-      if (existingItem) {
-        return prevItems.map((item) =>
-          item._id === product._id
-            ? { ...item, quantity: item.quantity + 1 }
-            : item
-        );
-      }
-
-      return [...prevItems, { ...product, quantity: 1 }];
-    });
-  };
-
-  // Remove Product
-  const removeFromCart = (productId) => {
-    setCartItems((prevItems) =>
-      prevItems.filter((item) => item._id !== productId)
-    );
-  };
-
-  // Update Quantity
-  const updateQuantity = (productId, newQuantity) => {
-    if (newQuantity <= 0) {
-      removeFromCart(productId);
-      return;
-    }
-
-    setCartItems((prevItems) =>
-      prevItems.map((item) =>
-        item._id === productId
-          ? { ...item, quantity: newQuantity }
-          : item
-      )
-    );
-  };
-
-  // Clear Cart
-  const clearCart = () => {
-    setCartItems([]);
-    localStorage.removeItem("cart");
-  };
-
   return (
     <CartContext.Provider
       value={{
@@ -89,6 +163,7 @@ export const CartProvider = ({ children }) => {
         removeFromCart,
         updateQuantity,
         clearCart,
+        loadCart
       }}
     >
       {children}

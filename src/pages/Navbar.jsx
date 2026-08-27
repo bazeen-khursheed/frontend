@@ -9,7 +9,7 @@ import { useEffect } from "react";
 
 const Navbar = () => {
 const { wishlistItems } = useContext(WishlistContext);
-const { cartCount, clearCart } = useContext(CartContext);
+const { cartCount } = useContext(CartContext);
 const [search, setSearch] = useState("");
 const [products, setProducts] = useState([]);
 const [notFound, setNotFound] = useState(false);
@@ -18,13 +18,13 @@ const [selectedIndex, setSelectedIndex] = useState(-1);
 const navigate = useNavigate();
 const user = JSON.parse(localStorage.getItem("user"));
 const logout = () => {
-clearCart();
 
-    localStorage.removeItem("cart");
-    localStorage.removeItem("orders");
-    localStorage.removeItem("user");
-    localStorage.removeItem("token");
-    navigate("/register");
+  localStorage.removeItem("orders");
+  localStorage.removeItem("user");
+  localStorage.removeItem("token");
+
+  navigate("/register");
+
 };
 
 useEffect(() => {

@@ -1,67 +1,193 @@
-import React, { createContext, useState, useEffect } from "react";
+import React, {
+  createContext,
+  useState,
+  useEffect
+} from "react";
+
+import axios from "axios";
 
 export const WishlistContext = createContext();
+
+const API = "https://backend-2p6c.vercel.app";
+
 export const WishlistProvider = ({ children }) => {
 
-const user = JSON.parse(localStorage.getItem("user"));
-const wishlistKey = user ? `wishlist_${user._id}` : "wishlist_guest";
-const [wishlistItems, setWishlistItems] = useState(() => {
-const savedWishlist = localStorage.getItem(wishlistKey);
-    return savedWishlist ? JSON.parse(savedWishlist) : [];
-});
+  const [wishlistItems, setWishlistItems] = useState([]);
 
- 
-useEffect(() => {
-const currentUser = JSON.parse(localStorage.getItem("user"));
-const key = currentUser ? `wishlist_${currentUser._id}` : "wishlist_guest";
-const savedWishlist = localStorage.getItem(key);
-    setWishlistItems(savedWishlist ? JSON.parse(savedWishlist) : []);
-}, [wishlistKey]);
+  // ================= LOAD WISHLIST =================
 
-  
-useEffect(() => {
-    localStorage.setItem(wishlistKey, JSON.stringify(wishlistItems));
-}, [wishlistItems, wishlistKey]);
+  const loadWishlist = async () => {
 
-  
-const toggleWishlist = (product) => {
-const exists = wishlistItems.find(
-      (item) => item._id === product._id
-);
+    try {
 
-if (exists) {
-      setWishlistItems((prev) =>
-        prev.filter((item) => item._id !== product._id)
+      const user = JSON.parse(
+        localStorage.getItem("user")
       );
-    } else {
-      setWishlistItems((prev) => [...prev, product]);
+
+      if (!user) {
+        setWishlistItems([]);
+        return;
+      }
+
+      const res = await axios.get(
+        `${API}/wishlist/${user.id}`
+      );
+
+      console.log("Wishlist from MongoDB:", res.data);
+
+      setWishlistItems(res.data || []);
+
+    } catch (error) {
+
+      console.log(
+        "Wishlist Load Error:",
+        error
+      );
+
+      setWishlistItems([]);
+
     }
-};
 
- 
-const isWishlisted = (id) => {
-    return wishlistItems.some((item) => item._id === id);
-};
+  };
 
-  
-const removeWishlist = (id) => {
-    setWishlistItems((prev) =>
-      prev.filter((item) => item._id !== id)
+
+  // ================= INITIAL LOAD =================
+
+  useEffect(() => {
+
+    loadWishlist();
+
+  }, []);
+
+
+  // ================= SAVE WISHLIST =================
+
+  const saveWishlist = async (updatedWishlist) => {
+
+    try {
+
+      const user = JSON.parse(
+        localStorage.getItem("user")
+      );
+
+      if (!user) return;
+
+      await axios.put(
+        `${API}/wishlist/${user.id}`,
+        {
+          wishlist: updatedWishlist
+        }
+      );
+
+      console.log("Wishlist saved to MongoDB");
+
+    } catch (error) {
+
+      console.log(
+        "Wishlist Save Error:",
+        error
+      );
+
+    }
+
+  };
+
+
+  // ================= TOGGLE WISHLIST =================
+
+  const toggleWishlist = (product) => {
+
+    setWishlistItems((prevItems) => {
+
+      const exists = prevItems.find(
+        (item) => item._id === product._id
+      );
+
+      let updatedWishlist;
+
+      if (exists) {
+
+        updatedWishlist = prevItems.filter(
+          (item) => item._id !== product._id
+        );
+
+      } else {
+
+        updatedWishlist = [
+          ...prevItems,
+          product
+        ];
+
+      }
+
+      saveWishlist(updatedWishlist);
+
+      return updatedWishlist;
+
+    });
+
+  };
+
+
+  // ================= CHECK =================
+
+  const isWishlisted = (id) => {
+
+    return wishlistItems.some(
+      (item) => item._id === id
     );
-};
 
- 
-const clearWishlist = () => {
+  };
+
+
+  // ================= REMOVE =================
+
+  const removeWishlist = (id) => {
+
+    setWishlistItems((prevItems) => {
+
+      const updatedWishlist =
+        prevItems.filter(
+          (item) => item._id !== id
+        );
+
+      saveWishlist(updatedWishlist);
+
+      return updatedWishlist;
+
+    });
+
+  };
+
+
+  // ================= CLEAR SCREEN =================
+
+  const clearWishlist = () => {
+
     setWishlistItems([]);
-    localStorage.removeItem(wishlistKey);
-};
+
+  };
 
 
+  return (
 
-return (
-    <WishlistContext.Provider value={{wishlistItems,toggleWishlist,isWishlisted,removeWishlist,clearWishlist,}}>
-    {children}</WishlistContext.Provider>
-);
+    <WishlistContext.Provider
+      value={{
+        wishlistItems,
+        toggleWishlist,
+        isWishlisted,
+        removeWishlist,
+        clearWishlist,
+        loadWishlist
+      }}
+    >
+
+      {children}
+
+    </WishlistContext.Provider>
+
+  );
+
 };
 
 export default WishlistContext;
