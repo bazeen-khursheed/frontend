@@ -50,11 +50,11 @@ const Login = () => {
       // Admin / Normal User
       if (data.data.user.role === "admin") {
 
-        window.location.href = "/dashboard";
+        window.location.href = "/home";
 
       } else {
 
-        window.location.href = "/home";
+        window.location.href = "/dashboard";
 
       }
 
