@@ -4,8 +4,8 @@ import axios from "axios"
 import toast from "react-hot-toast"
 import { useNavigate } from 'react-router-dom'
 import { useEffect } from 'react'
-
-
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "./Firebase";
 const Register = () => {
     useEffect(() => {document.body.classList.add("bg-slate-200","flex","items-center","justify-center",);}, []); 
 
@@ -15,7 +15,38 @@ const [phone, setPhone] = useState("")
 const [email, setEmail] = useState("")
 const [password, setPassword] = useState("")
 const navigate = useNavigate()
-    
+const handleGoogleSignup = async () => {
+  try {
+    const provider = new GoogleAuthProvider();
+
+    const result = await signInWithPopup(auth, provider);
+
+    const user = result.user;
+
+    console.log("Google User:", user);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL,
+        uid: user.uid,
+      })
+    );
+
+    localStorage.setItem("token", user.uid);
+ const data = await axios.post("http://localhost:8080/register", {name:user.displayName,email:email,isgoogle:user.uid })
+//  const data = await axios.post("https://backend-2p6c.vercel.app/register", {name:user.displayName,email:email,isgoogle:user.uid })
+    alert("Registration Successfully!");
+
+    window.location.href = "/dashboard";
+
+  } catch (error) {
+  console.error("Google Signup Error:", error);
+  alert(`${error.code}\n${error.message}`);
+}
+};
 async function submit(e) {
         e.preventDefault()
         try {
@@ -61,7 +92,9 @@ return (
             <div className="divider text-center mt-[15px] text-[#071a2f] font-[600]">OR</div>
 
             <div className="social-login flex flex-col gap-[10px]">
-                <button className="social google mt-[10px] p-[8px] rounded-[6px] border border-[#ddd] bg-white cursor-pointer  ">Continue with Google</button>
+                <button type="button" onClick={handleGoogleSignup}>
+  Continue with Google
+</button>
             </div>
 
             <p className="signup-text text-center   gap-[10px] mt-[14px] text-[#071a2f] flex justify-center">

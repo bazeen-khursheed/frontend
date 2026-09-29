@@ -1,58 +1,89 @@
 import React, { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import axios from "axios"
-import Navbar from './Navbar'
+
+
+import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
+import { auth } from "./Firebase";
 
 const Login = () => {
-
-  useEffect(() => {
+useEffect(() => {
     document.body.classList.add(
       "bg-slate-200",
       "flex",
       "items-center",
       "justify-center",
     );
-  }, []);
+}, []);
 
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+const [email, setEmail] = useState("")
+const [password, setPassword] = useState("")
 
-  async function submit(e) {
+const handleGoogleLogin = async () => {
+  console.log("click")
+  try {
+    const provider = new GoogleAuthProvider();
+
+    const result = await signInWithPopup(auth, provider);
+
+    const user = result.user;
+
+    console.log("Google User:", user);
+
+    localStorage.setItem(
+      "user",
+      JSON.stringify({
+        name: user.displayName,
+        email: user.email,
+        photo: user.photoURL,
+        uid: user.uid,
+      })
+    );
+
+    localStorage.setItem("token", user.uid);
+
+    alert("Login Successfully!");
+
+    window.location.href = "/dashboard";
+
+  } catch (error) {
+    console.log("Google Login Error:", error);
+    alert("Google Login Failed!");
+  }
+};
+
+async function submit(e) {
     e.preventDefault()
 
     try {
 
-      const data = await axios.post(
-        "https://backend-2p6c.vercel.app/login",
+const data = await axios.post(
+"https://backend-2p6c.vercel.app/login",
         {
           email,
           password
         }
-      );
+);
 
-      console.log(data.data.user);
-
-      alert("Login Successfully!");
-
-      // User ki information save
-      localStorage.setItem(
+ console.log(data.data.user);
+alert("Login Successfully!");  
+localStorage.setItem(
         "user",
         JSON.stringify(data.data.user)
-      );
+);
 
-      localStorage.setItem(
+localStorage.setItem(
         "token",
         data.data.user.id
-      );
+);
 
-      console.log(data);
+console.log(data);
 
-      // Admin / Normal User
       if (data.data.user.role === "admin") {
 
         window.location.href = "/home";
 
-      } else {
+} else {
 
         window.location.href = "/dashboard";
 
@@ -113,13 +144,12 @@ const Login = () => {
             <label className='text-[15px] mb-[5px] font-semibold block'>
               Password
             </label>
-
-            <a
-              href="#"
-              className="forgot text-[12px] no-underline text-black"
-            >
-              Forgot password?
-            </a>
+<Link
+  to="/forgot-password"
+  className="forgot text-[12px] no-underline text-black"
+>
+  Forgot password?
+</Link>
 
           </div>
 
@@ -149,11 +179,11 @@ const Login = () => {
           OR
         </div>
 
-        <div className="social-login flex flex-col gap-[10px]">
+        <div className="social-login flex flex-col gap-[10px] cursor-pointer">
 
-          <button className="social google p-[10px] rounded-[6px] border border-[#ddd] bg-white cursor-pointer">
-            Continue with Google
-          </button>
+         <button type="button" onClick={handleGoogleLogin}>
+  Continue with Google
+</button>
 
         </div>
 

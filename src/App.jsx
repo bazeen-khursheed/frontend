@@ -19,7 +19,9 @@ import ProfileSidebar from "./pages/ProfileSidebar";
 import OrderHistory from "./pages/OrderHistory";
 import Wishlist from "./pages/Wishlist";
 import ProductDetail from "./pages/ProductDetail";
-
+  import ForgotPassword from "./pages/ForgotPassword";
+import VerifyOTP from "./pages/VerifyOTP";
+import ResetPassword from "./pages/ResetPassword";
 function App() {
   return (
     <BrowserRouter>
@@ -44,7 +46,9 @@ function App() {
             <Route path="/profile" element={<Profile />} />
             <Route path="/profilesidebar" element={<ProfileSidebar />} />
             <Route path="/orderhistory" element={<OrderHistory />} />
-           
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/verify-otp" element={<VerifyOTP />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
           </Routes>
 
         </WishlistProvider>

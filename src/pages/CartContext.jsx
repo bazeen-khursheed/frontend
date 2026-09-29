@@ -9,7 +9,7 @@ export const CartProvider = ({ children }) => {
 
   const [cartItems, setCartItems] = useState([]);
 
-  // Login user ka cart MongoDB se load
+
   const loadCart = async () => {
     try {
 
@@ -36,7 +36,7 @@ export const CartProvider = ({ children }) => {
     loadCart();
   }, []);
 
-  // MongoDB mein cart save
+ 
   const saveCart = async (updatedCart) => {
     try {
 
@@ -56,7 +56,7 @@ export const CartProvider = ({ children }) => {
     }
   };
 
-  // Add To Cart
+ 
   const addToCart = (product) => {
 
     setCartItems((prevItems) => {
@@ -96,7 +96,7 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // Remove Product
+ 
   const removeFromCart = (productId) => {
 
     setCartItems((prevItems) => {
@@ -111,7 +111,7 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // Update Quantity
+
   const updateQuantity = (productId, newQuantity) => {
 
     if (newQuantity <= 0) {
@@ -136,18 +136,18 @@ export const CartProvider = ({ children }) => {
     });
   };
 
-  // Clear only screen state
+
   const clearCart = () => {
     setCartItems([]);
   };
 
-  // Cart Count
+ 
   const cartCount = cartItems.reduce(
     (total, item) => total + item.quantity,
     0
   );
 
-  // Cart Total
+
   const cartTotal = cartItems.reduce(
     (total, item) => total + item.price * item.quantity,
     0

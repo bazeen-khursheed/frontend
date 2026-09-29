@@ -8,9 +8,9 @@ import { toast } from 'react-hot-toast';
 import axios from 'axios';
 
 const Cart = () => {
-  const { cartItems, cartTotal, updateQuantity, removeFromCart, clearCart } = useContext(CartContext);
+const { cartItems, cartTotal, updateQuantity, removeFromCart, clearCart } = useContext(CartContext);
 
-  const handleCheckout = async () => {
+const handleCheckout = async () => {
     if (cartItems.length === 0) {
       toast.error("Cart is empty!");
       return;
@@ -19,82 +19,62 @@ const Cart = () => {
     try {
       toast.loading("Redirecting to payment...", { id: 'checkout' });
 
-      // 🔍 Debug (optional but useful)
-      console.log("Cart Items:", cartItems);
+     
+console.log("Cart Items:", cartItems);
 console.log(cartItems);
 
-      const res = await axios.post("https://backend-2p6c.vercel.app/checkout", {
+const res = await axios.post("https://backend-2p6c.vercel.app/checkout", {
         items: cartItems
       });
-      console.log(res);
+console.log(res);
       
-
-      // toast.dismiss('checkout');
-      // toast.success("Redirecting to Stripe...");
-
-      // // ✅ Redirect to Stripe
-      window.location.href = res.data.paymentLink.url;
+window.location.href = res.data.paymentLink.url;
 
     } catch (err) {
       toast.dismiss('checkout');
       toast.error("Checkout failed!");
 
-      // ✅ BETTER ERROR LOGGING (IMPORTANT FIX)
+    
       console.error("Checkout Error:", err.response?.data || err.message);
     }
-  };
+};
 
-  if (cartItems.length === 0) {
-    return (
+if (cartItems.length === 0) {
+
+  return (
       <>
         <Navbar />
         <div className="min-h-screen bg-slate-200 flex flex-col items-center justify-center">
-          <div className="bg-white p-12 rounded-2xl shadow-xl text-center">
-            <h2 className="text-3xl font-bold text-gray-800 mb-4">Your Cart is Empty</h2>
-            <p className="text-gray-600 mb-8">Add some products to your cart and come back!</p>
-            <Link to="/products">
-              <button className="bg-gradient-to-r from-emerald-500 to-cyan-500 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition">
-                Continue Shopping
-              </button>
-            </Link>
-          </div>
+        <div className="bg-white p-12 rounded-2xl shadow-xl text-center">
+        <h2 className="text-3xl font-bold text-gray-800 mb-4">Your Cart is Empty</h2>
+        <p className="text-gray-600 mb-8">Add some products to your cart and come back!</p>
+        <Link to="/products">
+        <button className="bg-gradient-to-r from-emerald-500 to-cyan-500 text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition"> Continue Shopping</button></Link>
+        </div>
         </div>
       </>
     );
-  }
+}
 
-  return (
+return (
     <>
-      <Navbar />
-      <div className="min-h-screen bg-slate-200 py-10">
-        <div className="max-w-[1500px] mx-auto px-4">
+    <Navbar />
+    <div className="min-h-screen bg-slate-200 py-10">
+    <div className="max-w-[1500px] mx-auto px-4">
+    <div className="flex items-center justify-between mb-8">
+    <h1 className="text-3xl font-bold text-gray-800">Shopping Cart</h1>
+    <button onClick={clearCart}
+    className="text-red-500 hover:text-red-700 font-semibold flex items-center gap-2">
+    <Trash2 size={20} />Clear Cart</button>
+    </div>
 
-          <div className="flex items-center justify-between mb-8">
-            <h1 className="text-3xl font-bold text-gray-800">Shopping Cart</h1>
-            <button
-              onClick={clearCart}
-              className="text-red-500 hover:text-red-700 font-semibold flex items-center gap-2"
-            >
-              <Trash2 size={20} />
-              Clear Cart
-            </button>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-
-            {/* Cart Items */}
-            <div className="lg:col-span-2 space-y-4">
-              {cartItems.map((item) => (
-              
-                <div key={item._id} className="bg-white rounded-xl shadow-lg p-6 flex flex-col sm:flex-row gap-6">
-
-                  <div className="sm:w-32 h-32 flex-shrink-0 ">
-                    <img
-                      src={item.image}
-                      alt={item.title}
-                      className="w-full h-full object-contain"
-                    />
-                  </div>
+   <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+   <div className="lg:col-span-2 space-y-4">
+   {cartItems.map((item) => (
+   <div key={item._id} className="bg-white rounded-xl shadow-lg p-6 flex flex-col sm:flex-row gap-6">
+   <div className="sm:w-32 h-32 flex-shrink-0 ">
+    <img src={item.image} alt={item.title} className="w-full h-full object-contain"/>
+    </div>
 
                   <div className="flex-grow">
                     <div className="flex justify-between items-start">

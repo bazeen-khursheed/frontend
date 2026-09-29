@@ -12,11 +12,8 @@ const API = "https://backend-2p6c.vercel.app";
 
 export const WishlistProvider = ({ children }) => {
 
-  const [wishlistItems, setWishlistItems] = useState([]);
-
-  // ================= LOAD WISHLIST =================
-
-  const loadWishlist = async () => {
+const [wishlistItems, setWishlistItems] = useState([]);
+const loadWishlist = async () => {
 
     try {
 
@@ -51,18 +48,14 @@ export const WishlistProvider = ({ children }) => {
   };
 
 
-  // ================= INITIAL LOAD =================
-
-  useEffect(() => {
+ useEffect(() => {
 
     loadWishlist();
 
   }, []);
 
 
-  // ================= SAVE WISHLIST =================
-
-  const saveWishlist = async (updatedWishlist) => {
+const saveWishlist = async (updatedWishlist) => {
 
     try {
 
@@ -91,11 +84,7 @@ export const WishlistProvider = ({ children }) => {
     }
 
   };
-
-
-  // ================= TOGGLE WISHLIST =================
-
-  const toggleWishlist = (product) => {
+const toggleWishlist = (product) => {
 
     setWishlistItems((prevItems) => {
 
@@ -129,9 +118,7 @@ export const WishlistProvider = ({ children }) => {
   };
 
 
-  // ================= CHECK =================
-
-  const isWishlisted = (id) => {
+const isWishlisted = (id) => {
 
     return wishlistItems.some(
       (item) => item._id === id
@@ -139,10 +126,7 @@ export const WishlistProvider = ({ children }) => {
 
   };
 
-
-  // ================= REMOVE =================
-
-  const removeWishlist = (id) => {
+const removeWishlist = (id) => {
 
     setWishlistItems((prevItems) => {
 
@@ -158,11 +142,7 @@ export const WishlistProvider = ({ children }) => {
     });
 
   };
-
-
-  // ================= CLEAR SCREEN =================
-
-  const clearWishlist = () => {
+const clearWishlist = () => {
 
     setWishlistItems([]);
 
