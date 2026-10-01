@@ -23,7 +23,8 @@ const ForgotPassword = () => {
       setLoading(true);
 
       const response = await axios.post(
-        "http://localhost:8080/forgot-password",
+        // "http://localhost:8080/forgot-password",
+        "https://backend-2p6c.vercel.app/forgot-password",
         {
           email: email.trim()
         }

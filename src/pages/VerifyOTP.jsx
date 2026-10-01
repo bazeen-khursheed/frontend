@@ -13,8 +13,8 @@ const VerifyOTP = () => {
       const email = localStorage.getItem("resetEmail");
 
       await axios.post(
-        "http://localhost:8080/verify-otp",
-        //  "https://backend-2p6c.vercel.app/verify-otp",
+        // "http://localhost:8080/verify-otp",
+         "https://backend-2p6c.vercel.app/verify-otp",
         {
           email,
           otp

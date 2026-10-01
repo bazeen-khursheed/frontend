@@ -36,8 +36,8 @@ const handleGoogleSignup = async () => {
     );
 
     localStorage.setItem("token", user.uid);
- const data = await axios.post("http://localhost:8080/register", {name:user.displayName,email:email,isgoogle:user.uid })
-//  const data = await axios.post("https://backend-2p6c.vercel.app/register", {name:user.displayName,email:email,isgoogle:user.uid })
+//  const data = await axios.post("http://localhost:8080/register", {name:user.displayName,email:email,isgoogle:user.uid })
+ const data = await axios.post("https://backend-2p6c.vercel.app/register", {name:user.displayName,email:email,isgoogle:user.uid })
     alert("Registration Successfully!");
 
     window.location.href = "/dashboard";

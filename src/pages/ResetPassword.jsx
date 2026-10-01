@@ -20,8 +20,8 @@ const ResetPassword = () => {
       const email = localStorage.getItem("resetEmail");
 
       await axios.post(
-        "http://localhost:8080/reset-password",
-        //  "https://backend-2p6c.vercel.app/reset-password",
+        // "http://localhost:8080/reset-password",
+         "https://backend-2p6c.vercel.app/reset-password",
         {
           email,
           password
