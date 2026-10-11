@@ -1,110 +1,107 @@
-// 
-
-
-import React, { useState } from "react";
+import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import API from "../api";
 
-const ForgotPassword = () => {
-  const [email, setEmail] = useState("");
-  const [loading, setLoading] = useState(false);
-
+export default function ForgotPassword() {
   const navigate = useNavigate();
+  const [email, setEmail] = useState("");
+  const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError("");
+    setMessage("");
+    setLoading(true);
 
-    if (!email) {
-      alert("Please enter your email!");
-      return;
-    }
+    const normalizedEmail = email.trim().toLowerCase();
 
     try {
-      setLoading(true);
+      const response = await API.post("/forgot-password", {
+        email: normalizedEmail,
+      });
 
-      const response = await axios.post(
-        // "http://localhost:8080/forgot-password",
-        "https://backend-2p6c.vercel.app/forgot-password",
-        {
-          email: email.trim()
-        }
+      localStorage.setItem("resetEmail", normalizedEmail);
+
+      navigate("/verify-otp", {
+        state: { email: normalizedEmail },
+      });
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Could not send OTP. Please try again."
       );
-
-      console.log("OTP RESPONSE:", response.data);
-
-      localStorage.setItem("resetEmail", email.trim());
-
-      alert("OTP sent to your email!");
-
-      navigate("/verify-otp");
-
-    } catch (error) {
-      console.log("OTP ERROR:", error);
-
-      alert(
-        error.response?.data?.message ||
-        error.message ||
-        "Failed to send OTP!"
-      );
-
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-slate-200">
+    <main className="flex min-h-[85vh] items-center justify-center bg-[#07111f] px-4 py-12 text-white">
+      <div className="w-full max-w-md rounded-3xl border border-white/10 bg-[#0b1727] p-7 shadow-2xl sm:p-9">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-300/10 text-teal-300">
+          <span className="text-2xl">✉</span>
+        </div>
 
-      <div className="bg-white w-[400px] p-[25px] rounded-[8px] shadow-[0_0_30px_rgba(0,0,0,0.2)]">
-
-        <h2 className="text-[24px] font-bold text-[#071a2f] text-center mb-[10px]">
-          Forgot Password
-        </h2>
-
-        <p className="text-center text-gray-600 text-[14px] mb-[25px]">
-          Enter your email to receive an OTP
+        <p className="mt-6 text-center text-sm font-bold uppercase tracking-widest text-teal-300">
+          Account Recovery
         </p>
 
-        <form onSubmit={handleSubmit}>
+        <h1 className="mt-3 text-center text-3xl font-extrabold">
+          Forgot Password?
+        </h1>
 
-          <label className="text-[15px] font-semibold block mb-[5px]">
-            Email address
-          </label>
+        <p className="mt-3 text-center text-sm leading-6 text-slate-400">
+          Enter your registered email address. We will send you a verification
+          code to reset your password.
+        </p>
 
-          <input
-            type="email"
-            placeholder="Enter your email address"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            className="w-full p-[10px] rounded-[6px] border border-[#071a2f] mb-[20px]"
-          />
+        <form onSubmit={handleSubmit} className="mt-8 space-y-5">
+          <div>
+            <label htmlFor="email" className="mb-2 block text-sm font-medium">
+              Email address
+            </label>
+
+            <input
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="you@example.com"
+              autoComplete="email"
+              required
+              className="w-full rounded-xl border border-white/10 bg-[#07111f] px-4 py-3.5 text-sm outline-none focus:border-teal-300"
+            />
+          </div>
+
+          {error && (
+            <p role="alert" className="rounded-xl bg-red-400/10 p-3 text-sm text-red-300">
+              {error}
+            </p>
+          )}
+
+          {message && (
+            <p role="status" className="text-sm text-teal-300">
+              {message}
+            </p>
+          )}
 
           <button
             type="submit"
             disabled={loading}
-            className="w-full p-[10px] bg-[#071a2f] text-white rounded-[8px] cursor-pointer text-[16px] disabled:opacity-50"
+            className="w-full rounded-xl bg-gradient-to-r from-teal-300 to-cyan-300 px-4 py-3.5 font-bold text-[#07111f] disabled:opacity-60"
           >
-            {loading ? "Sending OTP..." : "Send OTP"}
+            {loading ? "Sending OTP..." : "Send Verification Code →"}
           </button>
-
         </form>
 
-        <div className="text-center mt-[20px]">
-
-          <Link
-            to="/login"
-            className="text-black font-semibold no-underline text-[14px]"
-          >
+        <p className="mt-7 text-center text-sm text-slate-400">
+          Remember your password?{" "}
+          <Link to="/login" className="font-semibold text-teal-300">
             Back to Login
           </Link>
-
-        </div>
-
+        </p>
       </div>
-
-    </div>
+    </main>
   );
-};
-
-export default ForgotPassword;
+}

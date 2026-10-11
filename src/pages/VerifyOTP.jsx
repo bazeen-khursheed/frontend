@@ -1,96 +1,163 @@
-import React, { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import axios from "axios";
+import { useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import API from "../api";
 
-const VerifyOTP = () => {
-  const [otp, setOtp] = useState("");
+export default function VerifyOTP() {
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleSubmit = async (e) => {
+  const email =
+    location.state?.email || localStorage.getItem("resetEmail") || "";
+
+  const [otp, setOtp] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [resending, setResending] = useState(false);
+
+  const handleVerify = async (e) => {
     e.preventDefault();
+    setError("");
+
+    if (!email) {
+      setError("Please request a new OTP first.");
+      return;
+    }
+
+    setLoading(true);
 
     try {
-      const email = localStorage.getItem("resetEmail");
+      await API.post("/verify-otp", {
+        email,
+        otp: otp.trim(),
+      });
 
-      await axios.post(
-        // "http://localhost:8080/verify-otp",
-         "https://backend-2p6c.vercel.app/verify-otp",
-        {
-          email,
-          otp
-        }
+      navigate("/reset-password", {
+        state: { email },
+      });
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "OTP verification failed."
       );
-
-      alert("OTP verified successfully!");
-
-      navigate("/reset-password");
-
-    } catch (error) {
-      console.log(error);
-
-     alert(
-  error.response?.data?.message ||
-  error.message ||
-  "OTP verification failed!"
-);
-
-console.log("OTP ERROR:", error.response?.data || error);
+    } finally {
+      setLoading(false);
     }
   };
 
+  const handleResend = async () => {
+    if (!email) {
+      setError("Please return to Forgot Password and enter your email.");
+      return;
+    }
+
+    setError("");
+    setResending(true);
+
+    try {
+      await API.post("/forgot-password", { email });
+      setOtp("");
+      setError("A new OTP has been sent to your email.");
+    } catch (err) {
+      setError(
+        err.response?.data?.message || "Could not resend OTP."
+      );
+    } finally {
+      setResending(false);
+    }
+  };
+
+  if (!email) {
+    return (
+      <main className="flex min-h-[85vh] items-center justify-center bg-[#07111f] px-4 text-white">
+        <div className="max-w-md rounded-2xl border border-white/10 bg-[#0b1727] p-7 text-center">
+          <h1 className="text-2xl font-bold">Request an OTP first</h1>
+          <p className="mt-3 text-sm text-slate-400">
+            Enter your email address to receive a verification code.
+          </p>
+          <Link
+            to="/forgot-password"
+            className="mt-6 inline-block font-semibold text-teal-300"
+          >
+            Go to Forgot Password →
+          </Link>
+        </div>
+      </main>
+    );
+  }
+
   return (
-    <div className="min-h-screen w-full flex items-center justify-center bg-slate-200">
+    <main className="flex min-h-[85vh] items-center justify-center bg-[#07111f] px-4 py-12 text-white">
+      <div className="w-full max-w-md rounded-3xl border border-white/10 bg-[#0b1727] p-7 shadow-2xl sm:p-9">
+        <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-2xl bg-teal-300/10 text-2xl text-teal-300">
+          #
+        </div>
 
-      <div className="bg-white w-[400px] p-[25px] rounded-[8px] shadow-[0_0_30px_rgba(0,0,0,0.2)]">
-
-        <h2 className="text-[24px] font-bold text-[#071a2f] text-center mb-[10px]">
-          Verify OTP
-        </h2>
-
-        <p className="text-center text-gray-600 text-[14px] mb-[25px]">
-          Enter the 6-digit OTP sent to your email
+        <p className="mt-6 text-center text-sm font-bold uppercase tracking-widest text-teal-300">
+          Email Verification
         </p>
 
-        <form onSubmit={handleSubmit}>
+        <h1 className="mt-3 text-center text-3xl font-extrabold">
+          Verify Your OTP
+        </h1>
 
-          <label className="text-[15px] font-semibold block mb-[5px]">
-            OTP Code
-          </label>
+        <p className="mt-3 break-words text-center text-sm leading-6 text-slate-400">
+          Enter the 6-digit code sent to <span className="text-teal-300">{email}</span>.
+          The code expires in 10 minutes.
+        </p>
 
-          <input
-            type="text"
-            maxLength="6"
-            placeholder="Enter OTP"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            required
-            className="w-full p-[10px] rounded-[6px] border border-[#071a2f] mb-[20px] text-center tracking-[8px]"
-          />
+        <form onSubmit={handleVerify} className="mt-8 space-y-5">
+          <div>
+            <label htmlFor="otp" className="mb-2 block text-sm font-medium">
+              6-digit OTP
+            </label>
+
+            <input
+              id="otp"
+              type="text"
+              inputMode="numeric"
+              autoComplete="one-time-code"
+              maxLength={6}
+              pattern="[0-9]{6}"
+              value={otp}
+              onChange={(e) => {
+                setOtp(e.target.value.replace(/\D/g, "").slice(0, 6));
+                setError("");
+              }}
+              placeholder="Enter OTP"
+              required
+              className="w-full rounded-xl border border-white/10 bg-[#07111f] px-4 py-4 text-center text-2xl tracking-[0.5em] outline-none focus:border-teal-300"
+            />
+          </div>
+
+          {error && (
+            <p role="alert" className="rounded-xl bg-amber-400/10 p-3 text-sm text-amber-200">
+              {error}
+            </p>
+          )}
 
           <button
             type="submit"
-            className="w-full p-[10px] bg-[#071a2f] text-white rounded-[8px] cursor-pointer text-[16px]"
+            disabled={loading || otp.length !== 6}
+            className="w-full rounded-xl bg-gradient-to-r from-teal-300 to-cyan-300 px-4 py-3.5 font-bold text-[#07111f] disabled:opacity-60"
           >
-            Verify OTP
+            {loading ? "Verifying..." : "Verify OTP →"}
           </button>
-
         </form>
 
-        <div className="text-center mt-[20px]">
+        <button
+          type="button"
+          onClick={handleResend}
+          disabled={resending}
+          className="mt-5 w-full text-sm font-semibold text-teal-300 disabled:opacity-60"
+        >
+          {resending ? "Sending..." : "Resend OTP"}
+        </button>
 
-          <Link
-            to="/forgot-password"
-            className="text-black font-semibold no-underline text-[14px]"
-          >
-            Back to Forgot Password
+        <p className="mt-5 text-center text-sm text-slate-400">
+          <Link to="/forgot-password" className="text-teal-300">
+            Change email address
           </Link>
-
-        </div>
-
+        </p>
       </div>
-
-    </div>
+    </main>
   );
-};
-
-export default VerifyOTP;
+}

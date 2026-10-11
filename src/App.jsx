@@ -1,60 +1,158 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
-import Dashboard from "./pages/Dashboard";
-import CreateProduct from "./pages/CreateProduct";
-import ProductList from "./pages/ProductList";
-import Login from "./pages/Login";
-import Register from "./pages/Register";
-import ProtectedRoutes from "./pages/ProtectedRoutes";
-import AdminProtectedRoute from "./pages/AdminProtectedRoute";
-import Home from "./pages/Home";
-import Products from "./pages/Products";
+
+import {
+  BrowserRouter,
+  Routes,
+  Route,
+  Navigate,
+  useLocation,
+  Outlet,
+} from "react-router-dom";
+
 import Navbar from "./pages/Navbar";
-import Cart from "./pages/Cart";
-import About from "./pages/About";
-import Contact from "./pages/Contact";
-import { CartProvider } from "./pages/CartContext";
-import { WishlistProvider } from "./pages/WishlistContext";
+import Home from "./pages/Home";
+import Scholarship from "./pages/Scholarship";
 import Profile from "./pages/Profile";
-import ProfileSidebar from "./pages/ProfileSidebar";
-import OrderHistory from "./pages/OrderHistory";
-import Wishlist from "./pages/Wishlist";
-import ProductDetail from "./pages/ProductDetail";
-  import ForgotPassword from "./pages/ForgotPassword";
+import Assistant from "./pages/Assistant";
+import Register from "./pages/Register";
+import Login from "./pages/Login";
+import ForgotPassword from "./pages/ForgotPassword";
 import VerifyOTP from "./pages/VerifyOTP";
 import ResetPassword from "./pages/ResetPassword";
-function App() {
+import "./index.css";
+
+// Check login
+function ProtectedRoute() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+}
+
+// Student protected routes
+function StudentProtectedRoute() {
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    return <Navigate to="/login" replace />;
+  }
+
+  return <Outlet />;
+}
+
+function AppLayout() {
+  const location = useLocation();
+
+  const authPages = [
+  "/login",
+  "/register",
+  "/forgot-password",
+  "/verify-otp",
+  "/reset-password",
+];
+  const isAuthPage = authPages.includes(location.pathname);
+
   return (
-    <BrowserRouter>
-      <CartProvider>
-        <WishlistProvider>
+    <div className="min-h-screen bg-[#07111f] text-slate-100">
+      {!isAuthPage && <Navbar />}
 
-          <Routes>
+      <Routes>
+        {/* Default page */}
+        <Route
+          path="/"
+          element={<Navigate to="/register" replace />}
+        />
+```jsx
+{/* Public authentication pages */}
+<Route path="/login" element={<Login />} />
+<Route path="/register" element={<Register />} />
+<Route
+  path="/forgot-password"
+  element={<ForgotPassword />}
+/>
+<Route
+  path="/verify-otp"
+  element={<VerifyOTP />}
+/>
+<Route
+  path="/reset-password"
+  element={<ResetPassword />}
+/>
 
-            <Route path="/" element={<Register />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
-            <Route path="/home" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/products" element={<Products />} />
-            <Route path="/contact" element={<Contact/>} />
-            <Route path="/product/:id" element={<ProductDetail />} />
-            <Route path="/cart" element={<Cart />} />
-            <Route path="/wishlist" element={<Wishlist />} />
-            <Route path="/dashboard"element={<AdminProtectedRoute><Dashboard /></AdminProtectedRoute>} />
-            <Route path="/create-product" element={<AdminProtectedRoute><CreateProduct /></AdminProtectedRoute>}/>
-            <Route path="/product-list"element={<AdminProtectedRoute><ProductList /></AdminProtectedRoute>}/>
-            <Route path="/profile" element={<Profile />} />
-            <Route path="/profilesidebar" element={<ProfileSidebar />} />
-            <Route path="/orderhistory" element={<OrderHistory />} />
-            <Route path="/forgot-password" element={<ForgotPassword />} />
-            <Route path="/verify-otp" element={<VerifyOTP />} />
-            <Route path="/reset-password" element={<ResetPassword />} />
-          </Routes>
+{/* All logged-in pages */}
+<Route element={<ProtectedRoute />}>
+  <Route path="/home" element={<Home />} />
+  <Route path="/scholarship" element={<Scholarship />} />
+  <Route path="/profile" element={<Profile />} />
+  <Route path="/assistant" element={<Assistant />} />
 
-        </WishlistProvider>
-      </CartProvider>
-    </BrowserRouter>
+  <Route path="/student" element={<StudentProtectedRoute />}>
+    <Route
+      index
+      element={<Navigate to="/profile" replace />}
+    />
+  </Route>
+</Route>
+
+
+        {/* All logged-in pages */}
+        <Route element={<ProtectedRoute />}>
+          <Route path="/home" element={<Home />} />
+          <Route path="/scholarship" element={<Scholarship />} />
+          <Route path="/profile" element={<Profile />} />
+          <Route path="/assistant" element={<Assistant />} />
+      
+          {/* Student-only profile management section */}
+          <Route path="/student" element={<StudentProtectedRoute />}>
+            <Route
+              index
+              element={<Navigate to="/profile" replace />}
+            />
+
+            {/* Add edit/delete pages here when created */}
+            {/* Example:
+            <Route
+              path="edit-profile"
+              element={<EditProfile />}
+            />
+            */}
+          </Route>
+        </Route>
+
+        {/* Unknown URLs */}
+        <Route
+          path="*"
+          element={<Navigate to="/login" replace />}
+        />
+      </Routes>
+
+      {!isAuthPage && (
+        <footer className="border-t border-white/10 px-5 py-8 text-center text-sm text-slate-400">
+          <p className="font-semibold text-white">
+            Scholarship
+            <span className="text-teal-300">Match</span> AI 🇵🇰
+          </p>
+
+          <p className="mt-2">
+            Discover opportunities. Build your future.
+          </p>
+
+          <p className="mt-3 text-xs text-slate-500">
+            © {new Date().getFullYear()} ScholarshipMatch AI.
+            Verify scholarship details with official providers.
+          </p>
+        </footer>
+      )}
+    </div>
   );
 }
 
-export default App;
+export default function App() {
+  return (
+    <BrowserRouter>
+      <AppLayout />
+    </BrowserRouter>
+  );
+}
